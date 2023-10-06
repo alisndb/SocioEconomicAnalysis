@@ -39,6 +39,50 @@ class DataViewer:
         plt.tight_layout()
         plt.show()
 
+    @staticmethod
+    def plot_pie_charts(data, header):
+        years = data['Год'].unique()
+        regions = ['Российская Федерация', 'г. Москва']
+
+        for year in years:
+            fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+
+            for region in regions:
+                filtered_data = data[(data['Год'] == year) & (data['Регион'] == region)]
+                labels = filtered_data.columns[2:]
+                sizes = filtered_data.iloc[0, 2:]
+
+                if region == 'Российская Федерация':
+                    ax = ax1
+                else:
+                    ax = ax2
+
+                ax.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90)
+                ax.axis('equal')
+                ax.set_title(region)
+
+            plt.suptitle(f'Рис. {header} - {year}', y=-0.01, fontsize='medium')
+
+            plt.tight_layout()
+            plt.show()
+
+    @staticmethod
+    def plot_ratios(data, header):
+        fig, ax = plt.subplots(figsize=(10, 6))
+
+        for column in data.columns[1:]:
+            if column != 'Год':
+                ax.plot(data['Год'], data[column], label=column)
+
+        ax.set_xlabel('Годы')
+        ax.set_ylabel('Отношение Москва/Россия')
+        ax.grid()
+        ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=2)
+        plt.suptitle(f'Рис. {header}', y=-0.01, fontsize='medium')
+
+        plt.tight_layout()
+        plt.show()
+
     def display_data(self, header, data):
         display(HTML(f'Таблица. {header}'))
         display(data)
